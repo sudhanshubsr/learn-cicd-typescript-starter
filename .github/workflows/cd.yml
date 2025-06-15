@@ -6,7 +6,7 @@ on:
 
 jobs:
   Deploy:
-    name: Deploy to GCP
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:

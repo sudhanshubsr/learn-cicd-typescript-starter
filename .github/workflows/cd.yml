@@ -6,16 +6,14 @@ on:
 
 jobs:
   Deploy:
-    name: Deploy
+    name: Deploy to GCP
     runs-on: ubuntu-latest
 
     steps:
-    # Check out the code from the repository prebuilt action
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Node
-      # Set up Node.js environment
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -25,3 +23,18 @@ jobs:
 
       - name: Build project
         run: npm run build
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: notely-463012
+          install_components: "gcloud"
+
+      - name: Build and push Docker image to Artifact Registry
+        run: |
+          gcloud builds submit --tag us-central1-docker.pkg.dev/notely-463012/notely-ar-repo/notely:latest
